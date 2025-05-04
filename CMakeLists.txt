@@ -4,12 +4,16 @@ project(main CXX)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)
 
-add_definitions(-DTEST_EXPORTS)
-add_library(main SHARED main.cpp Api.h
-        helper.cpp
-        type.h
-)
-add_executable(Test test.cpp)
 if(MSVC)
-    target_compile_options(main PRIVATE /MT)
+    add_compile_options(/Os /GL /MP)
+    add_link_options(/LTCG /DEBUG:NONE)
 endif()
+add_definitions(-DTEST_EXPORTS)
+add_library(main SHARED main.cpp)
+add_executable(test test.cpp)
+if(MSVC)
+    target_link_options(main PRIVATE /OPT:REF,ICF)
+    target_compile_options(main PRIVATE /MT /GR- /Gy)
+endif()
+set_target_properties(main PROPERTIES OUTPUT_NAME "小宇云创")
+set_target_properties(test PROPERTIES OUTPUT_NAME "Test")
